@@ -1,67 +1,56 @@
-function celebrateSuccess() {
-    var textElement = document.createElement('div');
-    textElement.textContent = '正解！おめでとうございます';
-    textElement.style.position = 'fixed';
-    textElement.style.top = '50%';
-    textElement.style.left = '50%';
-    textElement.style.transform = 'translate(-50%, -50%)';
-    textElement.style.fontSize = '3em';
-    textElement.style.fontWeight = 'bold';
-    textElement.style.color = 'red';
-    textElement.style.opacity = '0';
+function showAlert(message, url) {
+    // カスタムアラートの要素を作成
+    var overlay = document.createElement('div');
+    overlay.classList.add('custom-alert-overlay');
+    overlay.id = 'customAlertOverlay';
+    
+    var alertBox = document.createElement('div');
+    alertBox.classList.add('custom-alert');
+    alertBox.id = 'customAlert';
 
-    document.body.appendChild(textElement);
+    var image = document.createElement('img');
+    image.src=url;
+    
+    var alertMessage = document.createElement('div');
+    alertMessage.id = 'customAlertMessage';
+    alertMessage.innerHTML = message;
+    
+    var closeButton = document.createElement('button');
+    closeButton.id = 'customAlertButton';
+    closeButton.innerHTML = 'OK';
+    closeButton.onclick = function() {
+        overlay.style.display = 'none';
+        alertBox.style.display = 'none';
+    };
 
-    var opacity = 0;
-    var animationInterval = setInterval(function() {
-        opacity += 0.05;
-        textElement.style.opacity = opacity;
-        if (opacity >= 1) {
-            clearInterval(animationInterval);
-            setTimeout(function() {
-                document.body.removeChild(textElement);
-            }, 2000);
-        }
-    }, 50);
-}
+    // 要素をドキュメントに追加
+    overlay.appendChild(alertBox);
+    alertBox.appendChild(image);
+    alertBox.appendChild(alertMessage);
+    alertBox.appendChild(closeButton);
+    document.body.appendChild(overlay);
 
-function celebrateWrong(answer) {
-    var textElement = document.createElement('div');
-    textElement.textContent = `残念。正解は${answer}でした`;
-    textElement.style.position = 'fixed';
-    textElement.style.top = '50%';
-    textElement.style.left = '50%';
-    textElement.style.transform = 'translate(-50%, -50%)';
-    textElement.style.fontSize = '3em';
-    textElement.style.fontWeight = 'solid';
-    textElement.style.color = 'blue';
-    textElement.style.opacity = '0';
+    overlay.style.display = 'block';
+    alertBox.style.display = 'block';
+    alertMessage.innerHTML = message;
 
-    document.body.appendChild(textElement);
+    closeButton.onclick = function() {
+      overlay.style.display = 'none';
+      alertBox.style.display = 'none';
+    };
+  }
 
-    var opacity = 0;
-    var animationInterval = setInterval(function() {
-        opacity += 0.05;
-        textElement.style.opacity = opacity;
-        if (opacity >= 1) {
-            clearInterval(animationInterval);
-            setTimeout(function() {
-                document.body.removeChild(textElement);
-            }, 2000);
-        }
-    }, 50);
-}
 
 const questions = [
 {
-    question: "徳川家康は何幕府を開いた?",
+    question: "徳川家康は何幕府を開いた？",
     options: ["鎌倉", "室町", "江戸"],
     answer: "江戸"
 },
 {
-    question: "What is 2 + 2?",
-    options: ["3", "4", "5", "6"],
-    answer: "4"
+    question: "グラックス兄弟がしなかった事は？",
+    options: ["公有地の分配", "元老院政治の強化", "ローマ市民権の拡充", "新しい植民市の建設"],
+    answer: "元老院政治の強化"
 }
 ];
 
@@ -94,10 +83,10 @@ function checkAnswer() {
     const selectedAnswer = selectedOption.value;
     const currentQuestion = questions[currentQuestionIndex];
     if (selectedAnswer === currentQuestion.answer) {
-        celebrateSuccess();
+        showAlert("正解！おめでとうございます", "/correct.jpg");
         score++;
     } else {
-        celebrateWrong(currentQuestion.answer);
+        showAlert(`残念。正解は${currentQuestion.answer}でした`, "/wrong.jpg");
     }
 
     currentQuestionIndex++;
@@ -112,7 +101,10 @@ function showResult() {
     questionDiv.innerHTML = '';
     optionsDiv.innerHTML = '';
     submitBtn.style.display = 'none';
-    resultDiv.innerHTML = `<h3>Your Score: ${score}/${questions.length}</h3>`;
+    resultDiv.innerHTML = `
+        <img src="/clear.jpg"><img>
+        <h3>Your Score: ${score}/${questions.length}</h3>
+    `;
 }
 
 // Event listener for submit button
